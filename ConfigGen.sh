@@ -129,9 +129,10 @@ fi
 # RESOURCES
 echo "# Resources: #" >> ${config}
 echo "threads: 20" >> ${config}
-echo "prokka_db: /Soft/BacPack/resources/IPG_Bt_sequence.fasta" >> ${config}
-#echo "bacillales_odb: /home/maksim/Soft/BUSCO_db/bacillales_odb10" >> ${config}
-#echo "bacilli_odb: /home/maksim/Soft/BUSCO_db/bacilli_odb10" >> ${config}
+echo "prokka_db: /Soft/BacPack/resources/IPG/IPG_Bt_sequence.fasta" >> ${config}
+echo "vfdb: /Soft/BacPack/resources/VFDB/VFDB_setB_pro.fas" >> ${config}
+echo "bacillales_odb: /Soft/BacPack/resources/BUSCO_db/bacillales_odb10" >> ${config}
+echo "bacilli_odb: /Soft/BacPack/resources/BUSCO_db/bacilli_odb10" >> ${config}
 
 # Soft
 echo "# Soft: #" >> ${config}
@@ -140,13 +141,13 @@ echo "fastqc: /Soft/FastQC/fastqc" >> ${config}
 echo "fastp:  /Soft/fastp" >> ${config}
 echo "spades: /Soft/SPAdes-3.15.4-Linux/bin/spades.py" >> ${config}
 echo "quast: /Soft/quast-5.2.0/quast.py" >> ${config}
-#echo "busco: /home/maksim/anaconda3/envs/busco_env/bin/busco" >> ${config}
+echo "busco: /opt/conda/envs/busco_env/bin/busco" >> ${config}
 echo "fastani: /Soft/fastANI" >> ${config}
 echo "prodigal: /Soft/prodigal.linux" >> ${config}
 echo "prokka: /Soft/prokka/bin/prokka" >> ${config}
 echo "checkm: /opt/conda/envs/checkm/bin/checkm" >> ${config}
 echo "cryprocessor: /Soft/cry_processor/cry_processor.py" >> ${config}
-#echo "idops: /home/maksim/anaconda3/envs/idops/bin/idops" >> ${config}
+echo "idops: /opt/conda/envs/idops/bin/idops" >> ${config}
 echo "rabbitqc: /Soft/RabbitQCPlus/RabbitQCPlus" >> ${config}
 echo "flye: /Soft/Flye/bin/flye" >> ${config}
 echo "medaka_consensus: /Soft/medaka/venv/bin/medaka_consensus" >> ${config}
@@ -154,4 +155,5 @@ echo "bwa: /Soft/bwa/bwa" >> ${config}
 echo "samtools: /Soft/samtools-1.16.1/samtools" >> ${config}
 echo "pilon: /Soft/pilon-1.24.jar" >> ${config}
 echo "deepbgc: /opt/conda/envs/deepbgc/bin/deepbgc" >> ${config}
-echo "/opt/conda/envs/antismash_env/bin/antismash" >> ${config}
+echo "antismash: /opt/conda/envs/antismash_env/bin/antismash" >> ${config}
+echo "mmseqs: /Soft/mmseqs/bin/mmseqs" >> ${config}

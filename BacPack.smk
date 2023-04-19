@@ -16,6 +16,7 @@ ROUNDS = 2
 PROKKA_DB = config['prokka_db']
 BACILLALES_ODB = config['bacillales_odb']
 BACILLI_ODB = config['bacilli_odb']
+VFDB = config['vfdb']
 
 # Soft: #
 PYTHON = config['python']
@@ -38,6 +39,7 @@ SAMTOOLS = config['samtools']
 PILON = config['pilon']
 DEEPBGC = config['deepbgc']
 ANTISMASH = config['antismash']
+MMSEQS = config['mmseqs']
 
 # Extracting suffixes: #
 r1_tag=SAMPLE_R1_FQ.split("/")[-1].split(".fastq")[0]
@@ -63,11 +65,11 @@ prokka_proteins_checkm = f"{OUTPUT_DIR}/QC/{SPECIES_TAG}_prokka_checkm/{SPECIES_
 prokka_cryprocessor_log = f"{OUTPUT_DIR}/Logs/{SPECIES_TAG}_cry_processor.log",
 prokka_idops_log = f"{OUTPUT_DIR}/Logs/{SPECIES_TAG}_idops.log",
 deepbgc_log = f"{OUTPUT_DIR}/Logs/{SPECIES_TAG}_DeepBGC.log",
-antismash_gbk = f"{OUTPUT_DIR}/{SPECIES_TAG}_antiSMASH/{SPECIES_TAG}_antismash.gbk"
+antismash_gbk = f"{OUTPUT_DIR}/{SPECIES_TAG}_antiSMASH/{SPECIES_TAG}_antismash.gbk",
+mmseqs_vs_vfdb = f"{OUTPUT_DIR}/{SPECIES_TAG}_mmseqs_vs_VFDB/{SPECIES_TAG}_mmseqs_vs_VFDB.tsv",
+mmseqs_vfdb_filtered = f"{OUTPUT_DIR}/{SPECIES_TAG}_mmseqs_vs_VFDB/{SPECIES_TAG}_mmseqs_vs_VFDB.filtered.tsv"
 
-
-rule_all_results = [short_reads_qc, tmm_reads, output_nucl_fasta, selected_seqs_quast_report, selected_seqs_vs_bacillales_odb10, selected_seqs_vs_bacilli_odb10, selected_seqs_fastani_top_hits, prokka_proteins, prokka_gff3, prokka_proteins_vs_bacillales_odb10, prokka_proteins_vs_bacilli_odb10, prokka_proteins_checkm, prokka_cryprocessor_log, prokka_idops_log, deepbgc_log, antismash_gbk]
-
+rule_all_results = [short_reads_qc, tmm_reads, output_nucl_fasta, selected_seqs_quast_report, selected_seqs_vs_bacillales_odb10, selected_seqs_vs_bacilli_odb10, selected_seqs_fastani_top_hits, prokka_proteins, prokka_gff3, prokka_proteins_vs_bacillales_odb10, prokka_proteins_vs_bacilli_odb10, prokka_proteins_checkm, prokka_cryprocessor_log, prokka_idops_log, deepbgc_log, antismash_gbk, mmseqs_vs_vfdb, mmseqs_vfdb_filtered]
 
 # Main: #
 if LONG_FQ:

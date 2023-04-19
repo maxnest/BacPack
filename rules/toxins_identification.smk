@@ -15,4 +15,4 @@ rule run_idops:
         OUTPUT_DIR + f"/Logs/{SPECIES_TAG}_idops.log"
     conda: "../envs/IDOPS_env.yaml"
     shell:
-        "{IDOPS} --verbosity --output {OUTPUT_DIR}/{SPECIES_TAG}_prokka_idops {input.prokka_proteins} 2> {log}"
+        "{IDOPS} --verbosity --output {OUTPUT_DIR}/{SPECIES_TAG}_prokka_idops -t {input.prokka_proteins} 2> {log}"

@@ -1,4 +1,4 @@
-# Snakemake rules for sequence annotation using the DeepBGC and antiSMASH programs
+# Snakemake rules for sequence annotation using the DeepBGC, antiSMASH, and MMseq2 (versus VFDB) programs
 
 rule run_deepbgc:
     input:
@@ -32,3 +32,21 @@ rule run_antismash:
     threads: config['threads']
     shell:
         "{ANTISMASH} --cb-knownclusters --fullhmmer --cpus {threads} --output-basename {SPECIES_TAG}_antismash --output-dir {OUTPUT_DIR}/{SPECIES_TAG}_antiSMASH --genefinding-gff3 {input.prokka_gff3} {input.selected_seqs}"
+
+rule run_mmseqs_vs_vfdb:
+    input:
+        prokka_proteins= OUTPUT_DIR + f"/{SPECIES_TAG}_prokka/{SPECIES_TAG}_prokka.faa"
+    output:
+        mmseqs_vfdb= OUTPUT_DIR + f"/{SPECIES_TAG}_mmseqs_vs_VFDB/{SPECIES_TAG}_mmseqs_vs_VFDB.tsv"
+    log:
+        OUTPUT_DIR + f"/Logs/{SPECIES_TAG}_mmseqs_vs_VFDB.log"
+    threads: config['threads']
+    shell:
+        "{MMSEQS} easy-search {input.prokka_proteins} {VFDB} {output.mmseqs_vfdb} tmp_mmseqs --threads {threads} --format-output 'query,target,pident,alnlen,mismatch,gapopen,qstart,qend,tstart,tend,evalue,bits,qcov,tcov'"
+
+rule mmseqs_hits_filtering:
+    input:
+        mmseqs_vfdb= OUTPUT_DIR + f"/{SPECIES_TAG}_mmseqs_vs_VFDB/{SPECIES_TAG}_mmseqs_vs_VFDB.tsv"
+    output:
+        mmseqs_vfdb_filtered= OUTPUT_DIR + f"/{SPECIES_TAG}_mmseqs_vs_VFDB/{SPECIES_TAG}_mmseqs_vs_VFDB.filtered.tsv"
+    script: "../scripts/mmseqs_hits_vs_VFDB_filtering.py"
