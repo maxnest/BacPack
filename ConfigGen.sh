@@ -21,10 +21,9 @@ BBBBBBBBBBBBBBBBB     aaaaaaaaaa  aaaa   ccccccccccccccccPPPPPPPPPP          aaa
                                                                                                                                    
                                                                                                                                   "
 
-usage() { echo "Usage: $0 --config <string> --species_tag <string> --r1_fq <string> --r2_fq <string> --output_dir <string>
-       --ref_nucl_fasta_path <string> --min_len <string> [--long_fq <string>] [--medaka_model <string>] " 1>&2; }
+usage() { echo "Usage: $0 --config <string> --species_tag <string> [--fasta <string>] [--r1_fq <string>] [--r2_fq <string>] [--long_fq <string>] [--medaka_model <string>] --output_dir <string> --ref_nucl_fasta_path <string> --min_len <string> " 1>&2; }
 
-eval set -- `getopt --options '' --longoptions config:,species_tag:,r1_fq:,r2_fq:,output_dir:,ref_nucl_fasta_path:,min_len:,long_fq::,medaka_model:: -- $@`
+eval set -- `getopt --options '' --longoptions config:,species_tag:,fasta:,r1_fq:,r2_fq:,long_fq:,medaka_model:,output_dir:,ref_nucl_fasta_path:,min_len: -- $@`
 
 while true; do
     case ${1} in
@@ -36,14 +35,21 @@ while true; do
 	    species_tag=${2}
 	    echo "*** The ${species_tag} is set as the value of the 'species_tag' argument ***"
 	    shift 2 ;;
+	--fasta)
+	    fasta=${2}
+	    shift 2 ;;
         --r1_fq)
 	    r1_fq=${2}
-	    echo "*** The ${r1_fq} is set as the short paired-end forward (R1) library ***"
 	    shift 2 ;;
         --r2_fq)
 	    r2_fq=${2}
-	    echo "*** The ${r2_fq} is set as the short paired-end reverse (R2) library ***"
 	    shift 2 ;;
+	--long_fq)
+            long_fq=${2}
+            shift 2 ;;
+        --medaka_model)
+            medaka_model=${2}
+            shift 2 ;;
         --output_dir)
 	    output_dir=${2}
 	    echo "*** Directory ${output_dir} selected as output directory for results obtained ***"
@@ -56,12 +62,6 @@ while true; do
             min_len=${2}
 	    echo "*** ${min_len} nucleotides set as the minimum length of the assembled sequence ***"
 	    shift 2 ;;
-	--long_fq)
-	    long_fq=${2}
-	    shift 2 ;;
-	--medaka_model)
-	    medaka_model=${2}
-	    shift 2 ;;
 	--)
 	    break
 	    shift ;;
@@ -73,11 +73,12 @@ while true; do
 done
 
 ## MESSAGE 
-if [ -z ${config} ] && [ -z ${species_tag} ] && [ -z ${r1_fq} ] && [ -z ${r2_fq} ] && [ -z ${output_dir} ] && [ -z ${ref_nucl_fasta_path} ] && [ -z ${min_len} ] && [ -z ${long_fq} ] && [ -z ${medaka_model} ] ; then
+if [ -z ${config} ] && [ -z ${species_tag} ] && [ -z ${fasta} ] && [ -z ${r1_fq} ] && [ -z ${r2_fq} ] && [ -z ${output_dir} ] && [ -z ${ref_nucl_fasta_path} ] && [ -z ${min_len} ] && [ -z ${long_fq} ] && [ -z ${medaka_model} ] ; then
 	usage
         echo "
 	--config	The name of the configuration file in which the parameters for launching the pipeline will be written. As an example, 'BacPack_config.yaml'
 	--species_tag	Species and/or strain name to be used when generating analysis results. As an example, 'Bt_st1402'
+	--fasta Full path to the fasta file with assembled genome
 	--r1_fq	Full path to the archive with raw forward (R1) short paired-end reads
 	--r2_fq Full path to the archive with raw reverse (R2) short paired-end reads 
 	--output_dir The name of the directory where all the results of the pipeline will be written
@@ -95,13 +96,25 @@ if [ ! -z ${species_tag} ]; then
     echo "species_tag: ${species_tag}" >> ${config}
 fi
 
+if [ ! -z ${fasta} ]; then
+    echo "NB! *** The ${fasta} is set as the assembled genome ***"
+    echo "fasta: ${fasta}" >> ${config}
+else
+    echo "fasta: FALSE" >> ${config}
+fi
+
 if [ ! -z ${r1_fq} ] && [ ! -z ${r2_fq} ]; then
+    echo "NB! *** The ${r1_fq} is set as the short paired-end forward (R1) library ***"
+    echo "NB! *** The ${r2_fq} is set as the short paired-end reverse (R2) library ***"
     echo "r1_fq: ${r1_fq}" >> ${config}
     echo "r2_fq: ${r2_fq}" >> ${config}
+else
+    echo "r1_fq: FALSE" >> ${config}
+    echo "r2_fq: FALSE" >> ${config}
 fi
 
 if [ ! -z ${long_fq} ]; then
-    echo "*** The ${long_fq} is set as the long read library ***"
+    echo "NB! *** The ${long_fq} is set as the long read library ***"
     echo "long_fq: ${long_fq}" >> ${config}
 else
     echo "long_fq: FALSE" >> ${config}
@@ -130,13 +143,15 @@ fi
 echo "# Resources: #" >> ${config}
 echo "threads: 20" >> ${config}
 echo "prokka_db: /Soft/BacPack/resources/IPG/IPG_Bt_sequence.fasta" >> ${config}
-echo "vfdb: /Soft/BacPack/resources/VFDB/VFDB_setB_pro.fas" >> ${config}
 echo "bacillales_odb: /Soft/BacPack/resources/BUSCO_db/bacillales_odb10" >> ${config}
 echo "bacilli_odb: /Soft/BacPack/resources/BUSCO_db/bacilli_odb10" >> ${config}
+echo "vfdb: /Soft/BacPack/resources/VFDB/VFDB_setB_pro.fas" >> ${config}
+echo "vfdb_tab: /Soft/BacPack/resources/VFDB/VFDB.tsv" >> ${config}
+echo "bpprc_tab: /Soft/BacPack/resources/BPPRC/BPPRC_tox_fixed.csv" >> ${config}
 
 # Soft
 echo "# Soft: #" >> ${config}
-echo "python: /opt/conda/bin/python" >> ${config}
+echo "python: /opt/conda/envs/snakemake_env/bin/python" >> ${config}
 echo "fastqc: /Soft/FastQC/fastqc" >> ${config}
 echo "fastp:  /Soft/fastp" >> ${config}
 echo "spades: /Soft/SPAdes-3.15.4-Linux/bin/spades.py" >> ${config}
@@ -147,7 +162,7 @@ echo "prodigal: /Soft/prodigal.linux" >> ${config}
 echo "prokka: /Soft/prokka/bin/prokka" >> ${config}
 echo "checkm: /opt/conda/envs/checkm/bin/checkm" >> ${config}
 echo "cryprocessor: /Soft/cry_processor/cry_processor.py" >> ${config}
-echo "idops: /opt/conda/envs/idops/bin/idops" >> ${config}
+echo "bttoxin_digger: /opt/conda/envs/bttoxin_digger_env/bin/BtToxin_Digger" >> ${config}
 echo "rabbitqc: /Soft/RabbitQCPlus/RabbitQCPlus" >> ${config}
 echo "flye: /Soft/Flye/bin/flye" >> ${config}
 echo "medaka_consensus: /Soft/medaka/venv/bin/medaka_consensus" >> ${config}

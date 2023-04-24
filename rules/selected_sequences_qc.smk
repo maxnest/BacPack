@@ -6,7 +6,7 @@ rule selected_seqs_quast_qc:
         tmm_r1= OUTPUT_DIR + f"/{SPECIES_TAG}_fastp/{SPECIES_TAG}.fastp_tmm.R1.fastq",
         tmm_r2= OUTPUT_DIR + f"/{SPECIES_TAG}_fastp/{SPECIES_TAG}.fastp_tmm.R2.fastq"
     output:
-       report_txt= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_selected_seqs_quast/report.txt"
+       quast_report= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_selected_seqs_quast/report.tsv"
     params:
         "--min-contig 500 --gene-finding"
     threads: config['threads']

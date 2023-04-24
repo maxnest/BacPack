@@ -24,7 +24,8 @@ rule selected_seqs_annotation_with_prokka:
         ref_fna_merged_model= OUTPUT_DIR + f"/{SPECIES_TAG}_prodigal/{SPECIES_TAG}.fastANI_top_ref.trn"
     output:
         prokka_proteins= OUTPUT_DIR + f"/{SPECIES_TAG}_prokka/{SPECIES_TAG}_prokka.faa",
-        prokka_gff3= OUTPUT_DIR + f"/{SPECIES_TAG}_prokka/{SPECIES_TAG}_prokka.gff"
+        prokka_gff3= OUTPUT_DIR + f"/{SPECIES_TAG}_prokka/{SPECIES_TAG}_prokka.gff",
+        prokka_report= OUTPUT_DIR + f"/{SPECIES_TAG}_prokka/{SPECIES_TAG}_prokka.tsv"
     params:
         "--force --addgenes --gffver '3' --genus 'Bacillus' --usegenus"
     threads: config['threads']
@@ -35,11 +36,11 @@ rule prokka_proteins_busco_qc_bacillales_odb10:
     input:
         prokka_proteins= OUTPUT_DIR + f"/{SPECIES_TAG}_prokka/{SPECIES_TAG}_prokka.faa"
     output:
-        short_summary= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_proteins_vs_Bacillales_odb10/run_bacillales_odb10/short_summary.txt"
+        short_summary= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_proteins_vs_Bacillales_odb10/run_bacillales_odb10/short_summary.txt",
+        busco_bacillales_report= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_proteins_vs_Bacillales_odb10/short_summary.specific.bacillales_odb10.{SPECIES_TAG}_prokka_proteins_vs_Bacillales_odb10.json"
     log:
         OUTPUT_DIR + f"/Logs/{SPECIES_TAG}_prokka_proteins_busco_qc_bacillales_obd10.log"
     threads: config['threads']
-    message: "Executing BUSCO with {threads} threads on the following file {input}."
     conda: "../envs/BUSCO_env.yaml"
     params:
         "--mode proteins --offline"
@@ -50,11 +51,11 @@ rule prokka_proteins_busco_qc_bacilli_odb10:
     input:
         prokka_proteins= OUTPUT_DIR + f"/{SPECIES_TAG}_prokka/{SPECIES_TAG}_prokka.faa"
     output:
-        short_summary= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_proteins_vs_Bacilli_odb10/run_bacilli_odb10/short_summary.txt"
+        short_summary= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_proteins_vs_Bacilli_odb10/run_bacilli_odb10/short_summary.txt",
+        busco_bacilli_report= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_proteins_vs_Bacilli_odb10/short_summary.specific.bacilli_odb10.{SPECIES_TAG}_prokka_proteins_vs_Bacilli_odb10.json"
     log:
         OUTPUT_DIR + f"/Logs/{SPECIES_TAG}_prokka_proteins_busco_qc_bacilli_obd10.log"
     threads: config['threads']
-    message: "Executing BUSCO with {threads} threads on the following files {input}."
     conda: "../envs/BUSCO_env.yaml"
     params:
         "--mode proteins --offline"
@@ -65,7 +66,7 @@ rule prokka_checkm_qc:
     input:
         prokka_proteins= OUTPUT_DIR + f"/{SPECIES_TAG}_prokka/{SPECIES_TAG}_prokka.faa"
     output:
-        prokka_proteins_checkm= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_checkm/{SPECIES_TAG}_prokka_checkm"
+        checkm_report= OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_checkm/{SPECIES_TAG}_prokka_checkm"
     log:
         OUTPUT_DIR + f"/Logs/{SPECIES_TAG}_prokka_checkm.log"
     threads: config['threads']

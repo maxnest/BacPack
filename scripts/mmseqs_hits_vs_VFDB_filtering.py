@@ -5,7 +5,13 @@ def filter_mmseqs_results(vir_pd, id_threshold, cov_threshold):
     filtered_vir_pd = vir_pd[(vir_pd['qcov'] * 100 >= cov_threshold) &
                              (vir_pd['tcov'] * 100 >= cov_threshold) &
                              (vir_pd['pident'] >= id_threshold)]
-    return filtered_vir_pd
+    
+    filtered_vir_pd_grouped = filtered_vir_pd.groupby('query', as_index=False).apply(
+        lambda group: group[(group['pident'] == group['pident'].max()) &
+                            (group['evalue'] == group['evalue'].min())])
+
+    return filtered_vir_pd_grouped
+
 
 
 if __name__ == "__main__":
