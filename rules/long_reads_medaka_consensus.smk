@@ -21,17 +21,12 @@ rule flye_medaka_consensus:
         flye_contigs= OUTPUT_DIR + f"/{SPECIES_TAG}_flye/assembly.fasta"
     output:
         medaka_consensus= OUTPUT_DIR + f"/{SPECIES_TAG}_medaka/consensus.fasta"
-    container: f"{MEDAKA_DOCKER}"
     log: OUTPUT_DIR + f"/Logs/{SPECIES_TAG}_medaka.log"
     threads: config['threads']
     shell:
         """
-        {DOCKER} run --gpus all -it --rm \
-             -v={input.long_fq}:{input.long_fq} \
-             -v={OUTPUT_DIR}/{SPECIES_TAG}_flye:{OUTPUT_DIR}/{SPECIES_TAG}_flye \
-             -v={OUTPUT_DIR}/{SPECIES_TAG}_medaka:{OUTPUT_DIR}/{SPECIES_TAG}_medaka \
-             -v={OUTPUT_DIR}/Logs:{OUTPUT_DIR}/Logs \
-             {MEDAKA_DOCKER} medaka_consensus -i {input.long_fq} -d {input.flye_contigs} -o {OUTPUT_DIR}/{SPECIES_TAG}_medaka -m {MEDAKA_MODEL} -t {threads}
+        cd /Soft/medaka && . ./venv/bin/activate
+        {MEDAKA_CONSENSUS} -i {input.long_fq} -d {input.flye_contigs} -o {OUTPUT_DIR}/{SPECIES_TAG}_medaka -m {MEDAKA_MODEL} -t {threads} 2> {log}
         """
 
 rule flye_medaka_consensus_busco_qc_bacillales_odb10:
