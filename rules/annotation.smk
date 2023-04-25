@@ -3,6 +3,8 @@
 rule run_deepbgc:
     input:
         selected_seqs= OUTPUT_DIR + f"/{SPECIES_TAG}_selected_sequences/{SPECIES_TAG}.selected_seqs.fasta"
+    output:
+        deepbgc_report= OUTPUT_DIR + f"/{SPECIES_TAG}_DeepBGC/{SPECIES_TAG}_DeepBGC.bgc.tsv"
     log:
         OUTPUT_DIR + f"/Logs/{SPECIES_TAG}_DeepBGC.log"
     conda: "../envs/DeepBGC_env.yaml"
@@ -10,7 +12,7 @@ rule run_deepbgc:
         "--score 0.7 --prodigal-meta-mode"
     shell:
         """
-        mkdir {OUTPUT_DIR}/{SPECIES_TAG}_DeepBGC
+        mkdir -p {OUTPUT_DIR}/{SPECIES_TAG}_DeepBGC
         cd {OUTPUT_DIR}/{SPECIES_TAG}_DeepBGC
 
         mkdir {OUTPUT_DIR}/{SPECIES_TAG}_DeepBGC/deepdata        

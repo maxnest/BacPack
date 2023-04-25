@@ -19,3 +19,10 @@ rule toxins_description:
     output:
         pipeline_toxins_description= OUTPUT_DIR + f"/{SPECIES_TAG}_summary/{SPECIES_TAG}_toxins_description.tsv"
     script: "../scripts/pipeline_toxins_identification_results_summary.py"
+
+rule bgc_description:
+    input:
+        deepbgc_report= OUTPUT_DIR + f"/{SPECIES_TAG}_DeepBGC/{SPECIES_TAG}_DeepBGC.bgc.tsv"
+    output:
+        pipeline_bgc_description= OUTPUT_DIR + f"/{SPECIES_TAG}_summary/{SPECIES_TAG}_bgc_description.tsv"
+    script: "../scripts/pipeline_bgc_identification_results_summary.py"

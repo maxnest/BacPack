@@ -66,14 +66,15 @@ busco_bacilli_report = OUTPUT_DIR + f"/QC/{SPECIES_TAG}_prokka_proteins_vs_Bacil
 prokka_cryprocessor_log = f"{OUTPUT_DIR}/Logs/{SPECIES_TAG}_cry_processor.log",
 cryprocessor_report = f"{OUTPUT_DIR}/{SPECIES_TAG}_prokka_cryprocessor/logs/diamond_matches_{SPECIES_TAG}_prokka.txt",
 bttoxin_digger_report= f"{OUTPUT_DIR}/{SPECIES_TAG}_bttoxin_digger/Results/Toxins/All_Toxins.txt",
-deepbgc_log = f"{OUTPUT_DIR}/Logs/{SPECIES_TAG}_DeepBGC.log",
+deepbgc_report = f"{OUTPUT_DIR}/{SPECIES_TAG}_DeepBGC/{SPECIES_TAG}_DeepBGC.bgc.tsv",
 antismash_gbk = f"{OUTPUT_DIR}/{SPECIES_TAG}_antiSMASH/{SPECIES_TAG}_antismash.gbk", 
 mmseqs_vs_vfdb = f"{OUTPUT_DIR}/{SPECIES_TAG}_mmseqs_vs_VFDB/{SPECIES_TAG}_mmseqs_vs_VFDB.tsv",
 mmseqs_vfdb_filtered = f"{OUTPUT_DIR}/{SPECIES_TAG}_mmseqs_vs_VFDB/{SPECIES_TAG}_mmseqs_vs_VFDB.filtered.tsv",
 pipeline_general_description = f"{OUTPUT_DIR}/{SPECIES_TAG}_summary/{SPECIES_TAG}_general_description.tsv",
-pipeline_toxins_description = f"{OUTPUT_DIR}/{SPECIES_TAG}_summary/{SPECIES_TAG}_toxins_description.tsv"
+pipeline_toxins_description = f"{OUTPUT_DIR}/{SPECIES_TAG}_summary/{SPECIES_TAG}_toxins_description.tsv",
+pipeline_bgc_description = f"{OUTPUT_DIR}/{SPECIES_TAG}_summary/{SPECIES_TAG}_bgc_description.tsv"
 
-rule_all_results = [quast_report, selected_seqs_vs_bacillales_odb10, selected_seqs_vs_bacilli_odb10, selected_seqs_fastani_top_hits, prokka_proteins, prokka_gff3, prokka_report, busco_bacillales_report, busco_bacilli_report, checkm_report, prokka_cryprocessor_log, cryprocessor_report, bttoxin_digger_report, deepbgc_log, antismash_gbk, mmseqs_vs_vfdb, mmseqs_vfdb_filtered, pipeline_general_description, pipeline_toxins_description]
+rule_all_results = [quast_report, selected_seqs_vs_bacillales_odb10, selected_seqs_vs_bacilli_odb10, selected_seqs_fastani_top_hits, prokka_proteins, prokka_gff3, prokka_report, busco_bacillales_report, busco_bacilli_report, checkm_report, prokka_cryprocessor_log, cryprocessor_report, bttoxin_digger_report, deepbgc_report, antismash_gbk, mmseqs_vs_vfdb, mmseqs_vfdb_filtered, pipeline_general_description, pipeline_toxins_description, pipeline_bgc_description]
 
 # Main: #
 if FASTA:
