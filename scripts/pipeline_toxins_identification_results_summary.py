@@ -121,7 +121,7 @@ def add_bpprc_toxicity_info(summary_pd, bpprc_toxins_db_pd, output_dict):
 
 
 def output_writing(outfile, output_pd):
-    output_pd.to_csv(outfile, sep='\t', index=False, header=['Protein_ID', 'Factor', 'Method', 'E-value',
+    output_pd.drop_duplicates(keep='first').to_csv(outfile, sep='\t', index=False, header=['Protein_ID', 'Factor', 'Method', 'E-value',
                                                              'Pident', 'Bitscore', 'Database', 'Name in Database',
                                                              'Target_order', 'Target_species', 'Activity',
                                                              'Percentage_mortality', 'Other'])

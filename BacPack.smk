@@ -44,10 +44,22 @@ MMSEQS = config['mmseqs']
 
 # Extracting suffixes: #
 if SAMPLE_R1_FQ and SAMPLE_R2_FQ:
-    r1_tag=SAMPLE_R1_FQ.split("/")[-1].split(".fastq")[0]
-    r2_tag=SAMPLE_R2_FQ.split("/")[-1].split(".fastq")[0]
+    if "fastq" in SAMPLE_R1_FQ.split("/")[-1].split("."):
+        r1_tag=SAMPLE_R1_FQ.split("/")[-1].split(".fastq")[0]
+        r2_tag=SAMPLE_R2_FQ.split("/")[-1].split(".fastq")[0]
+    elif "fq" in SAMPLE_R1_FQ.split("/")[-1].split("."):
+        r1_tag=SAMPLE_R1_FQ.split("/")[-1].split(".fq")[0]
+        r2_tag=SAMPLE_R2_FQ.split("/")[-1].split(".fq")[0]
+    else:
+        print("Please check that the analyzed short paired-end reads libraries have the ending 'fq' or 'fastq'")
 
-if LONG_FQ: long_reads_tag=LONG_FQ.split('/')[-1].split('.fastq')[0]
+if LONG_FQ: 
+    if "fastq" in LONG_FQ.split("/")[-1].split("."):
+       long_reads_tag=LONG_FQ.split("/")[-1].split(".fastq")[0]
+    elif "fq" in LONG_FQ.split("/")[-1].split("."):
+       long_reads_tag=LONG_FQ.split("/")[-1].split(".fq")[0]
+    else:
+        print("Please check that the analyzed ONT reads library have the ending 'fq' or 'fastq'")
 
 # Main results: #
 quast_report = f"{OUTPUT_DIR}/QC/{SPECIES_TAG}_selected_seqs_quast/report.tsv",

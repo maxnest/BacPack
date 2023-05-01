@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -y
 RUN apt-get install -y build-essential
-RUN apt-get install -y wget unzip libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 libfindbin-libs-perl libgomp1 libdatetime-perl libxml-simple-perl libdigest-md5-perl git default-jre bioperl vim cpanminus
+RUN apt-get install -y wget unzip libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 libfindbin-libs-perl libgomp1 libdatetime-perl libxml-simple-perl libdigest-md5-perl git default-jre bioperl vim cpanminus libncurses5-dev make cmake file bzip2 gcc g++ libbz2-dev liblzma-dev
 
 SHELL ["/bin/bash", "--login", "-c"]
 
@@ -52,8 +52,7 @@ RUN echo "### Prokka ###" >> ~/.bashrc && echo 'export PATH="/Soft/prokka:$PATH"
 RUN cpanm Bio::SearchIO::hmmer3
 RUN cd Soft && wget --quiet https://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux64.tbl2asn.gz && \
     gunzip linux64.tbl2asn.gz && mv linux64.tbl2asn tbl2asn && chmod +x tbl2asn && \
-    echo "### tbl2asn ###" >> ~/.bashrc && echo 'export PATH="/Soft:$PATH"' >> ~/.bashrc && \
-    rm /Soft/prokka/binaries/linux/tbl2asn
+    rm /Soft/prokka/binaries/linux/tbl2asn && mv tbl2asn /Soft/prokka/binaries/linux
 
 # CryProcessor #
 RUN cd Soft && git clone https://github.com/lab7arriam/cry_processor && /opt/conda/bin/python -m pip install biopython && \
@@ -65,11 +64,6 @@ RUN cd Soft && git clone https://github.com/RabbitBio/RabbitQCPlus.git && cd Rab
 
 # Flye #
 RUN cd Soft && git clone https://github.com/fenderglass/Flye && cd Flye && make
-
-# MEDAKA #
-RUN apt-get update && apt-get install --no-install-recommends -y make cmake file bzip2 gcc g++ python zlib1g-dev wget curl libffi-dev libncurses5-dev libbz2-dev liblzma-dev libcurl4-gnutls-dev libssl-dev python3-all-dev python3.8-venv python3-virtualenv virtualenv git-lfs && apt-get clean && apt-get autoclean && rm -rf /var/lib/apt/lists/*
-RUN git lfs install --skip-repo
-RUN cd Soft && git clone https://github.com/nanoporetech/medaka.git && cd medaka && make install
 
 # BWA #
 RUN cd Soft && git clone https://github.com/lh3/bwa.git && cd bwa && make
@@ -93,7 +87,14 @@ RUN conda create -n snakemake_env && conda activate snakemake_env && conda insta
 # BacPack and programs installed using yaml-files from it #
 
 # BacPack #
-RUN cd Soft && git clone https://github.com/maxnest/BacPack
+RUN mkdir Soft/BacPack && mkdir Soft/BacPack/resources && mkdir Soft/BacPack/envs && mkdir Soft/BacPack/rules && mkdir Soft/BacPack/scripts
+COPY BacPack.smk Soft/BacPack
+COPY ConfigGen.sh Soft/BacPack
+COPY envs Soft/BacPack/envs
+COPY resources Soft/BacPack/resources
+COPY rules Soft/BacPack/rules
+COPY scripts Soft/BacPack/scripts
+RUN cd Soft/BacPack && chmod +x ConfigGen.sh
 
 # IPG #
 RUN cd Soft/BacPack/resources/IPG && gunzip *.gz && cat *.fasta > IPG_Bt_sequence.fasta
@@ -123,3 +124,9 @@ RUN mkdir /Soft/CheckM && cd /Soft/CheckM && wget --quiet https://zenodo.org/rec
     tar -xzvf checkm_data_2015_01_16.tar.gz && rm checkm_data_2015_01_16.tar.gz
 RUN conda activate checkm && checkm data setRoot /Soft/CheckM/
 
+# MEDAKA #
+RUN conda env create -f /Soft/BacPack/envs/MEDAKA_env.yaml
+
+# Conda Snakemake environment activation #
+RUN echo "conda activate snakemake_env" >> ~/.bashrc 
+ENV PATH=/opt/conda/envs/snakemake_env/bin:$PATH

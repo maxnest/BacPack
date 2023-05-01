@@ -165,7 +165,7 @@ echo "cryprocessor: /Soft/cry_processor/cry_processor.py" >> ${config}
 echo "bttoxin_digger: /opt/conda/envs/bttoxin_digger_env/bin/BtToxin_Digger" >> ${config}
 echo "rabbitqc: /Soft/RabbitQCPlus/RabbitQCPlus" >> ${config}
 echo "flye: /Soft/Flye/bin/flye" >> ${config}
-echo "medaka_consensus: /Soft/medaka/venv/bin/medaka_consensus" >> ${config}
+echo "medaka_consensus: /opt/conda/envs/medaka_env/bin/medaka_consensus" >> ${config}
 echo "bwa: /Soft/bwa/bwa" >> ${config}
 echo "samtools: /Soft/samtools-1.16.1/samtools" >> ${config}
 echo "pilon: /Soft/pilon-1.24.jar" >> ${config}
