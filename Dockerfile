@@ -3,8 +3,9 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -y
-RUN apt-get install -y build-essential
-RUN apt-get install -y wget unzip libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 libfindbin-libs-perl libgomp1 libdatetime-perl libxml-simple-perl libdigest-md5-perl git default-jre bioperl vim cpanminus libncurses5-dev make cmake file bzip2 gcc g++ libbz2-dev liblzma-dev
+RUN apt-get install -y build-essential --fix-missing
+RUN apt-get install -y wget unzip libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 libfindbin-libs-perl libgomp1 libdatetime-perl libxml-simple-perl libdigest-md5-perl git default-jre bioperl vim cpanminus libncurses5-dev make cmake file bzip2 gcc g++ libbz2-dev liblzma-dev libssl-dev --fix-missing
+RUN apt-get update -y
 
 SHELL ["/bin/bash", "--login", "-c"]
 
@@ -34,11 +35,11 @@ RUN cd Soft && wget https://sourceforge.net/projects/quast/files/quast-5.2.0.tar
     mv download quast.tar.gz && tar -xzvf quast.tar.gz && rm quast.tar.gz
 
 # FastANI #
-RUN cd Soft && wget --quiet https://github.com/ParBLiSS/FastANI/releases/download/v1.33/fastANI-Linux64-v1.33.zip && \
+RUN cd Soft && wget https://github.com/ParBLiSS/FastANI/releases/download/v1.33/fastANI-Linux64-v1.33.zip && \
     unzip fastANI-Linux64-v1.33.zip && rm fastANI-Linux64-v1.33.zip
 
 # Prodigal #
-RUN cd Soft && wget --quiet https://github.com/hyattpd/Prodigal/releases/download/v2.6.3/prodigal.linux && \
+RUN cd Soft && wget https://github.com/hyattpd/Prodigal/releases/download/v2.6.3/prodigal.linux && \
     chmod +x prodigal.linux
 
 # Prokka #
@@ -50,7 +51,7 @@ RUN echo "### Prokka ###" >> ~/.bashrc && echo 'export PATH="/Soft/prokka:$PATH"
     echo 'export PATH="/Soft/prokka/db:$PATH"' >> ~/.bashrc && \
     echo 'export PATH="/Soft/prokka/binaries/linux:$PATH"' >> ~/.bashrc
 RUN cpanm Bio::SearchIO::hmmer3
-RUN cd Soft && wget --quiet https://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux64.tbl2asn.gz && \
+RUN cd Soft && wget https://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux64.tbl2asn.gz && \
     gunzip linux64.tbl2asn.gz && mv linux64.tbl2asn tbl2asn && chmod +x tbl2asn && \
     rm /Soft/prokka/binaries/linux/tbl2asn && mv tbl2asn /Soft/prokka/binaries/linux
 
@@ -69,16 +70,16 @@ RUN cd Soft && git clone https://github.com/fenderglass/Flye && cd Flye && make
 RUN cd Soft && git clone https://github.com/lh3/bwa.git && cd bwa && make
 
 # SAMtools #
-RUN cd Soft && wget --quiet https://github.com/samtools/samtools/releases/download/1.16.1/samtools-1.16.1.tar.bz2 && \
+RUN cd Soft && wget https://github.com/samtools/samtools/releases/download/1.16.1/samtools-1.16.1.tar.bz2 && \
     tar -xvf samtools-1.16.1.tar.bz2 && rm samtools-1.16.1.tar.bz2 && cd samtools-1.16.1 && \
     ./configure --prefix=/Soft/samtools-1.16.1/ && make && make install && \
     echo "### SAMtools (v1.16.1) ###" >> ~/.bashrc && echo 'export PATH="/Soft/samtools-1.16.1:$PATH"' >> ~/.bashrc
 
 # PILON #
-RUN cd Soft && wget --quiet https://github.com/broadinstitute/pilon/releases/download/v1.24/pilon-1.24.jar
+RUN cd Soft && wget https://github.com/broadinstitute/pilon/releases/download/v1.24/pilon-1.24.jar
 
 # MMseq2 #
-RUN cd Soft && wget --quiet https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz && tar xvfz mmseqs-linux-avx2.tar.gz && \
+RUN cd Soft && wget https://github.com/soedinglab/MMseqs2/releases/download/14-7e284/mmseqs-linux-avx2.tar.gz && tar xvfz mmseqs-linux-avx2.tar.gz && \
     echo "### MMseqs2 ###" >> ~/.bashrc && echo 'export PATH="/Soft/mmseqs/bin:$PATH"' >> ~/.bashrc
 
 # Snakemake #
@@ -97,7 +98,7 @@ COPY scripts Soft/BacPack/scripts
 RUN cd Soft/BacPack && chmod +x ConfigGen.sh
 
 # IPG #
-RUN cd Soft/BacPack/resources/IPG && gunzip *.gz && cat *.fasta > IPG_Bt_sequence.fasta
+RUN cd Soft/BacPack/resources/IPG && gunzip *.gz && cat *.fasta > IPG_sequences.fasta
 
 # BUSCO #
 RUN /opt/conda/bin/conda init bash
@@ -108,24 +109,29 @@ RUN conda env create -f /Soft/BacPack/envs/BUSCO_env.yaml && \
 RUN conda env create -f /Soft/BacPack/envs/bttoxin_digger_env.yaml 
 
 # DeepBGC #
-RUN conda env create -f /Soft/BacPack/envs/DeepBGC_env.yaml
+RUN cd Soft && mkdir DeepBGC_deepdata
+ENV DEEPBGC_DOWNLOADS_DIR=/Soft/DeepBGC_deepdata
+RUN conda env create -f /Soft/BacPack/envs/DeepBGC_env.yaml && conda activate deepbgc && /opt/conda/envs/deepbgc/bin/deepbgc download
 
 # antiSMASH #
 RUN conda env create -f /Soft/BacPack/envs/antiSMASH_env.yaml
-RUN cd Soft && wget --quiet https://dl.secondarymetabolites.org/releases/6.1.1/antismash-6.1.1.tar.gz && \
+RUN cd Soft && wget https://dl.secondarymetabolites.org/releases/6.1.1/antismash-6.1.1.tar.gz && \
     tar -zxf antismash-6.1.1.tar.gz && rm antismash-6.1.1.tar.gz && \
     conda activate antismash_env && pip install ./antismash-6.1.1 && \
     conda install meme==4.11.2 && download-antismash-databases
 
 # CheckM #
 RUN conda env create -f /Soft/BacPack/envs/CheckM_env.yaml
-RUN mkdir /Soft/CheckM && cd /Soft/CheckM && wget --quiet https://zenodo.org/record/7401545/files/checkm_data_2015_01_16.tar.gz?download=1 && \
+RUN mkdir /Soft/CheckM && cd /Soft/CheckM && wget https://zenodo.org/record/7401545/files/checkm_data_2015_01_16.tar.gz?download=1 && \
     mv 'checkm_data_2015_01_16.tar.gz?download=1' checkm_data_2015_01_16.tar.gz && \
     tar -xzvf checkm_data_2015_01_16.tar.gz && rm checkm_data_2015_01_16.tar.gz
 RUN conda activate checkm && checkm data setRoot /Soft/CheckM/
 
 # MEDAKA #
 RUN conda env create -f /Soft/BacPack/envs/MEDAKA_env.yaml
+
+# BTyper3 #
+RUN conda env create -f /Soft/BacPack/envs/BTyper3_env.yaml
 
 # Conda Snakemake environment activation #
 RUN echo "conda activate snakemake_env" >> ~/.bashrc 

@@ -142,7 +142,7 @@ fi
 # RESOURCES
 echo "# Resources: #" >> ${config}
 echo "threads: 20" >> ${config}
-echo "prokka_db: /Soft/BacPack/resources/IPG/IPG_Bt_sequence.fasta" >> ${config}
+echo "prokka_db: /Soft/BacPack/resources/IPG/IPG_sequences.fasta" >> ${config}
 echo "bacillales_odb: /Soft/BacPack/resources/BUSCO_db/bacillales_odb10" >> ${config}
 echo "bacilli_odb: /Soft/BacPack/resources/BUSCO_db/bacilli_odb10" >> ${config}
 echo "vfdb: /Soft/BacPack/resources/VFDB/VFDB_setB_pro.fas" >> ${config}
@@ -172,3 +172,4 @@ echo "pilon: /Soft/pilon-1.24.jar" >> ${config}
 echo "deepbgc: /opt/conda/envs/deepbgc/bin/deepbgc" >> ${config}
 echo "antismash: /opt/conda/envs/antismash_env/bin/antismash" >> ${config}
 echo "mmseqs: /Soft/mmseqs/bin/mmseqs" >> ${config}
+echo "btyper3: /opt/conda/envs/btyper3_env/bin/btyper3" >> ${config}
